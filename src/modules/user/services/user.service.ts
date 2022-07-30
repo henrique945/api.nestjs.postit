@@ -1,10 +1,9 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Like, Repository } from "typeorm";
 import { UserEntity } from "../entities/user.entity";
 import { CreateUserPayload } from "../models/create-user.payload";
 import { UpdateUserPayload } from "../models/update-user.payload";
-import { UserProxy } from "../models/user.proxy";
 
 @Injectable()
 export class UserService {
@@ -14,11 +13,12 @@ export class UserService {
     private readonly repository: Repository<UserEntity>,
   ) {}
 
-  public async getUsers(): Promise<UserEntity[]> {
+  public async getUsers(search: string): Promise<UserEntity[]> {
     const users = await this.repository.find({
       order: {
         name: 'ASC',
       },
+      where: search ? { name: Like('%' + search + '%'), } : { },
     });
 
     return users;

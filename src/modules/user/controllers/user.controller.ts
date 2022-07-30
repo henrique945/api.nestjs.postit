@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put } from '@nestjs/common';
-import { ApiBody, ApiOkResponse, ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query } from '@nestjs/common';
+import { ApiBody, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { CreateUserPayload } from '../models/create-user.payload';
 import { UpdateUserPayload } from '../models/update-user.payload';
 import { UserProxy } from '../models/user.proxy';
@@ -16,8 +16,9 @@ export class UserController {
   @Get('/list')
   @ApiOperation({ summary: 'Obtém os dados de todos os usuários' })
   @ApiOkResponse({ type: UserProxy, isArray: true })
-  public getUsers(): Promise<UserProxy[]> {
-    return this.service.getUsers().then(result => result.map(entity => new UserProxy(entity)));
+  @ApiQuery({ name: 'search', description: 'A busca a ser realizada', required: false })
+  public getUsers(@Query('search') search: string): Promise<UserProxy[]> {
+    return this.service.getUsers(search).then(result => result.map(entity => new UserProxy(entity)));
   }
 
   @Get(':userId')

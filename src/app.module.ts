@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { enviroment } from './environment/environment';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
@@ -9,6 +10,7 @@ import { UserModule } from './modules/user/user.module';
       database: 'test.db',
       autoLoadEntities: true,
       synchronize: true,
+      logging: enviroment.DATABASE_LOGGING === 'true',
     }),
     UserModule,
   ],
