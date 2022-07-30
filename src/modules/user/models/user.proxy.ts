@@ -1,11 +1,15 @@
-import { ApiProperty } from "@nestjs/swagger";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { UserEntity } from "../entities/user.entity";
 
 export class UserProxy {
-  constructor(id: number, name: string, age: number, isGraduated: boolean) {
-    this.id = id;
-    this.name = name;
-    this.age = age;
-    this.isGraduated = isGraduated;
+  constructor(entity: UserEntity) {
+    this.id = entity.id;
+    this.name = entity.name;
+    this.email = entity.email;
+    this.role = entity.role;
+    this.imageUrl = entity.imageUrl;
+    this.createdAt = entity.createdAt;
+    this.updatedAt = entity.updatedAt;
   }
 
   @ApiProperty()
@@ -15,8 +19,17 @@ export class UserProxy {
   public name: string;
   
   @ApiProperty()
-  public age: number;
+  public email: string;
+
+  @ApiPropertyOptional()
+  public role?: string;
+
+  @ApiPropertyOptional()
+  public imageUrl?: string;
 
   @ApiProperty()
-  public isGraduated: boolean;
+  public createdAt: Date;
+
+  @ApiProperty()
+  public updatedAt: Date;
 }

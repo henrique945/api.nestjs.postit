@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { UserEntity } from "../entities/user.entity";
@@ -14,50 +14,62 @@ export class UserService {
     private readonly repository: Repository<UserEntity>,
   ) {}
 
-  // CRUD - Create Read Update Delete
-  public listUsers: UserProxy[] = [];
+  public async getUsers(): Promise<UserEntity[]> {
+    const users = await this.repository.find({
+      order: {
+        name: 'ASC',
+      },
+    });
 
-  public getUsers(): UserProxy[] {
-    return this.listUsers;
+    return users;
   }
 
-  public getOneUser(userId: string): UserProxy {
-    const user = this.listUsers.find(user => user.id === +userId);
+  public async getOneUser(userId: string): Promise<UserEntity> {
+    const user = await this.repository.findOneBy({ id: +userId });
 
     if (!user)
-      throw new NotFoundException('Usuário não existe.');
+      throw new NotFoundException('O usuário não foi encontrado');
 
     return user;
   }
 
-  public postUser(user: CreateUserPayload): UserProxy {
-    this.listUsers.push(user);
+  public async postUser(payload: CreateUserPayload): Promise<UserEntity> {
+    const existingUser = await this.repository.findOneBy({ email: payload.email });
 
-    return user;
+    if (existingUser)
+      throw new BadRequestException('Já existe um usuário com esse email');
+
+    const user = new UserEntity();
+
+    user.name = payload.name;
+    user.email = payload.email;
+    user.password = payload.password;
+    user.role = payload.role;
+    user.imageUrl = payload.imageUrl;
+
+    return await this.repository.save(user);
   }
 
-  public putUser(userId: string, user: UpdateUserPayload): UserProxy {
-    const index = this.listUsers.findIndex(user => user.id === +userId);
+  public async putUser(userId: string, payload: UpdateUserPayload): Promise<UserEntity> {
+    const user = await this.repository.findOneBy({ id: +userId });
 
-    if(index === -1)
-      throw new NotFoundException('Usuário não existe.');
+    if (!user)
+      throw new NotFoundException('O usuário não foi encontrado');
 
-    this.listUsers[index] = this.getProxyFromPayload(user, this.listUsers[index]);
+    user.name = payload.name ?? user.name;
+    user.role = payload.role ?? user.role;
+    user.imageUrl = payload.imageUrl ?? user.imageUrl;
 
-    return this.listUsers[index];
+    return await this.repository.save(user);
   }
 
-  public deleteUser(userId: string): void {
-    this.listUsers = this.listUsers.filter(user => user.id !== +userId);
-  }
+  public async deleteUser(userId: string): Promise<void> {
+    const user = await this.repository.findOneBy({ id: +userId });
 
-  private getProxyFromPayload(payload: UpdateUserPayload, proxy: UserProxy): UserProxy {
-    return new UserProxy(
-      proxy.id,
-      payload.name || proxy.name,
-      payload.age || proxy.age,
-      proxy.isGraduated,
-    );
+    if (!user)
+      throw new NotFoundException('O usuário não foi encontrado');
+
+    await this.repository.remove(user);
   }
 
 }

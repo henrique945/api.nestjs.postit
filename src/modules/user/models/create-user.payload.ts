@@ -1,12 +1,7 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsBoolean, IsDefined, IsNumber, IsPositive, IsString, MinLength } from "class-validator";
+import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { IsBoolean, IsDefined, IsEmail, IsNumber, IsOptional, IsPositive, IsString, IsUrl, MinLength } from "class-validator";
 
 export class CreateUserPayload {
-  @ApiProperty()
-  @IsDefined({ message: 'A identificação deve ser definida' })
-  @IsNumber({ maxDecimalPlaces: 0 }, { message: 'A identificação deve ser um número inteiro' })
-  public id: number;
-
   @ApiProperty()
   @IsDefined({ message: 'O nome deve ser definido' })
   @IsString({ message: 'O nome deve ser uma string' })
@@ -14,13 +9,25 @@ export class CreateUserPayload {
   public name: string;
 
   @ApiProperty()
-  @IsDefined({ message: 'A idade deve ser definida' })
-  @IsNumber({ maxDecimalPlaces: 0 }, { message: 'A idade deve ser um número inteiro' })
-  @IsPositive({ message: 'A idade deve ser um número positivo' })
-  public age: number;
+  @IsDefined({ message: 'O email deve ser definido' })
+  @IsString({ message: 'O email deve ser uma string' })
+  @IsEmail({ message: 'O email não é válido' })
+  public email: string;
 
   @ApiProperty()
-  @IsDefined({ message: 'O estado da graduação deve ser definido' })
-  @IsBoolean({ message: 'O estado da graduação deve ser um boolean' })
-  public isGraduated: boolean;
+  @IsDefined({ message: 'A senha deve ser definida' })
+  @IsString({ message: 'A senha deve ser uma string' })
+  @MinLength(6, { message: 'A senha deve ter no mínimo 6 caracteres' })
+  public password: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString({ message: 'O cargo deve ser uma string' })
+  public role?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString({ message: 'A URL da imagem deve ser uma string' })
+  @IsUrl({}, { message: 'A URL deve ser válida' })
+  public imageUrl?: string;
 }
