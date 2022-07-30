@@ -1,7 +1,6 @@
 import { Controller, Post, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
-import { Request } from "express";
 import { User } from "src/decorators/user/user.decorator";
 import { UserEntity } from "src/modules/user/entities/user.entity";
 import { LoginPayload } from "../models/login.payload";

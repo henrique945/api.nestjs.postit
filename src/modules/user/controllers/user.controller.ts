@@ -1,6 +1,5 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
-import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
+import { ApiBody, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { ProtectTo } from 'src/decorators/protect/protect.decorator';
 import { User } from 'src/decorators/user/user.decorator';
 import { UserEntity } from '../entities/user.entity';
@@ -35,7 +34,6 @@ export class UserController {
     return this.service.getOneUser(+userId).then(entity => new UserProxy(entity));
   }
 
-  @ProtectTo()
   @Post()
   @ApiOperation({ summary: 'Cadastra um usuário' })
   @ApiOkResponse({ type: UserProxy })
@@ -58,7 +56,7 @@ export class UserController {
   @ApiOperation({ summary: 'Deleta um usuário' })
   @ApiOkResponse()
   @ApiParam({ name: 'userId', description: 'A identificação do usuário' })
-  public deleteUser(@Param('userId') userId: string): void {
-    this.service.deleteUser(userId);
+  public deleteUser(@User() requestUser: UserEntity, @Param('userId') userId: string): void {
+    this.service.deleteUser(requestUser, userId);
   }
 }

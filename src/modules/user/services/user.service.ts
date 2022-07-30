@@ -73,11 +73,14 @@ export class UserService {
     return await this.repository.save(user);
   }
 
-  public async deleteUser(userId: string): Promise<void> {
+  public async deleteUser(requestUser: UserEntity, userId: string): Promise<void> {
     const user = await this.repository.findOneBy({ id: +userId });
 
     if (!user)
       throw new NotFoundException('O usuário não foi encontrado');
+
+    if (requestUser.id !== user.id)
+      throw new ForbiddenException('Você não tem permissão para deletar esse usuário');
 
     await this.repository.remove(user);
   }
