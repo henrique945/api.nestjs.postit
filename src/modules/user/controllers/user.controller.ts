@@ -1,5 +1,9 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query } from '@nestjs/common';
-import { ApiBody, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiBody, ApiOkResponse, ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { ProtectTo } from 'src/decorators/protect/protect.decorator';
+import { User } from 'src/decorators/user/user.decorator';
+import { UserEntity } from '../entities/user.entity';
 import { CreateUserPayload } from '../models/create-user.payload';
 import { UpdateUserPayload } from '../models/update-user.payload';
 import { UserProxy } from '../models/user.proxy';
@@ -13,6 +17,7 @@ export class UserController {
     private readonly service: UserService,
   ) {}
 
+  @ProtectTo()
   @Get('/list')
   @ApiOperation({ summary: 'Obtém os dados de todos os usuários' })
   @ApiOkResponse({ type: UserProxy, isArray: true })
@@ -21,6 +26,7 @@ export class UserController {
     return this.service.getUsers(search).then(result => result.map(entity => new UserProxy(entity)));
   }
 
+  @ProtectTo()
   @Get(':userId')
   @ApiOperation({ summary: 'Obtém um usuário pela identificação' })
   @ApiOkResponse({ type: UserProxy })
@@ -29,6 +35,7 @@ export class UserController {
     return this.service.getOneUser(+userId).then(entity => new UserProxy(entity));
   }
 
+  @ProtectTo()
   @Post()
   @ApiOperation({ summary: 'Cadastra um usuário' })
   @ApiOkResponse({ type: UserProxy })
@@ -37,13 +44,14 @@ export class UserController {
     return this.service.postUser(user).then(entity => new UserProxy(entity));
   }
 
+  @ProtectTo()
   @Put(':userId')
   @ApiOperation({ summary: 'Atualiza um usuário' })
   @ApiOkResponse({ type: UserProxy })
   @ApiParam({ name: 'userId', description: 'A identificação do usuário' })
   @ApiBody({ type: UpdateUserPayload, description: 'Os dados a serem atualizados do usuário' })
-  public putUser(@Param('userId') userId: string, @Body() user: UpdateUserPayload): Promise<UserProxy> {
-    return this.service.putUser(userId, user).then(entity => new UserProxy(entity));
+  public putUser(@User() requestUser: UserEntity, @Param('userId') userId: string, @Body() user: UpdateUserPayload): Promise<UserProxy> {
+    return this.service.putUser(requestUser, userId, user).then(entity => new UserProxy(entity));
   }
 
   @Delete(':userId')

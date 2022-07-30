@@ -1,5 +1,6 @@
 import { Module } from "@nestjs/common";
 import { TypeOrmModule } from "@nestjs/typeorm";
+import { AuthTokenModule } from "../auth/auth-token.module";
 import { UserController } from "./controllers/user.controller";
 import { UserEntity } from "./entities/user.entity";
 import { UserService } from "./services/user.service";
@@ -9,6 +10,7 @@ import { UserService } from "./services/user.service";
     TypeOrmModule.forFeature([
       UserEntity,
     ]),
+    AuthTokenModule,
   ],
   controllers: [
     UserController,

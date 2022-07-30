@@ -2,6 +2,7 @@ import { Controller, Post, Req, UseGuards } from "@nestjs/common";
 import { AuthGuard } from "@nestjs/passport";
 import { ApiBody, ApiOkResponse, ApiOperation, ApiTags } from "@nestjs/swagger";
 import { Request } from "express";
+import { User } from "src/decorators/user/user.decorator";
 import { UserEntity } from "src/modules/user/entities/user.entity";
 import { LoginPayload } from "../models/login.payload";
 import { TokenProxy } from "../models/token.proxy";
@@ -20,8 +21,8 @@ export class AuthController {
   @ApiOperation({ summary: 'Realiza o login de um usuário' })
   @ApiOkResponse({ type: TokenProxy })
   @ApiBody({ type: LoginPayload })
-  public async login(@Req() request: Request): Promise<TokenProxy> {
-    return await this.service.generateToken(request.user as UserEntity);
+  public async login(@User() requestUser: UserEntity): Promise<TokenProxy> {
+    return await this.service.generateToken(requestUser);
   }
 
 }
