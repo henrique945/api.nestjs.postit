@@ -1,10 +1,18 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { UserEntity } from "../entities/user.entity";
 import { CreateUserPayload } from "../models/create-user.payload";
 import { UpdateUserPayload } from "../models/update-user.payload";
 import { UserProxy } from "../models/user.proxy";
 
 @Injectable()
 export class UserService {
+
+  constructor(
+    @InjectRepository(UserEntity)
+    private readonly repository: Repository<UserEntity>,
+  ) {}
 
   // CRUD - Create Read Update Delete
   public listUsers: UserProxy[] = [];
