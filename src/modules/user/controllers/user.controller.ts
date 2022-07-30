@@ -26,7 +26,7 @@ export class UserController {
   @ApiOkResponse({ type: UserProxy })
   @ApiParam({ name: 'userId', description: 'A identificação do usuário' })
   public getOneUser(@Param('userId') userId: string): Promise<UserProxy> {
-    return this.service.getOneUser(userId).then(entity => new UserProxy(entity));
+    return this.service.getOneUser(+userId).then(entity => new UserProxy(entity));
   }
 
   @Post()
