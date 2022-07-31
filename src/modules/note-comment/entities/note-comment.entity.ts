@@ -23,7 +23,7 @@ export class NoteCommentEntity {
   @ManyToOne(() => UserEntity)
   public user?: UserEntity;
 
-  @ManyToOne(() => NoteEntity)
+  @ManyToOne(() => NoteEntity, entity => entity.comments, { onDelete: 'CASCADE' })
   public note?: NoteEntity;
 
 }

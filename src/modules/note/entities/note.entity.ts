@@ -27,7 +27,7 @@ export class NoteEntity {
   @Column()
   public userId: number;
 
-  @ManyToOne(() => UserEntity, entity => entity.notes)
+  @ManyToOne(() => UserEntity, entity => entity.notes, { onDelete: 'CASCADE' })
   public user?: UserEntity;
 
   @OneToMany(() => NoteCommentEntity, entity => entity.note)
