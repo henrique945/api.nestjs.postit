@@ -57,7 +57,7 @@ export class UserController {
   @ApiOperation({ summary: 'Deleta um usuário' })
   @ApiOkResponse()
   @ApiParam({ name: 'userId', description: 'A identificação do usuário' })
-  public deleteUser(@User() requestUser: UserEntity, @Param('userId') userId: string): void {
-    this.service.deleteUser(requestUser, userId);
+  public deleteUser(@User() requestUser: UserEntity, @Param('userId') userId: string): Promise<void> {
+    return this.service.deleteUser(requestUser, userId);
   }
 }
