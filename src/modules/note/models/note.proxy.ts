@@ -1,4 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from "@nestjs/swagger";
+import { NoteCommentProxy } from "src/modules/note-comment/models/note-comment.proxy";
 import { UserProxy } from "src/modules/user/models/user.proxy";
 import { NoteEntity } from "../entities/note.entity";
 
@@ -15,6 +16,9 @@ export class NoteProxy {
 
     if (entity.user)
       this.user = new UserProxy(entity.user);
+
+    if (entity.comments)
+      this.comments = entity.comments.map(comment => new NoteCommentProxy(comment));
   }
 
   @ApiProperty()
@@ -38,7 +42,10 @@ export class NoteProxy {
   @ApiProperty()
   public userId: number;
 
-  @ApiPropertyOptional({ type: UserProxy })
+  @ApiPropertyOptional({ type: () => UserProxy })
   public user?: UserProxy;
+
+  @ApiPropertyOptional({ type: () => NoteCommentProxy, isArray: true })
+  public comments?: NoteCommentProxy[];
 
 }
