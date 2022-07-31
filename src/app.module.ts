@@ -5,17 +5,22 @@ import { AuthModule } from './modules/auth/auth.module';
 import { NoteCommentModule } from './modules/note-comment/note-comment.module';
 import { NoteLikeModule } from './modules/note-like/note-like.module';
 import { NoteRoutingModule } from './modules/note/note-routing.module';
-import { NoteModule } from './modules/note/note.module';
 import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot({
-      type: 'sqlite',
-      database: 'test.db',
+      type: 'postgres',
+      url: enviroment.DATABASE_URL,
       autoLoadEntities: true,
       synchronize: true,
       logging: enviroment.DATABASE_LOGGING === 'true',
+      ssl: true,
+      extra: {
+        ssl: {
+          rejectUnauthorized: false,
+        }
+      },
     }),
     UserModule,
     AuthModule,
