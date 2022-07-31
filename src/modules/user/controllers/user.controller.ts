@@ -17,7 +17,7 @@ export class UserController {
   ) {}
 
   @ProtectTo()
-  @Get('/list')
+  @Get()
   @ApiOperation({ summary: 'Obtém os dados de todos os usuários' })
   @ApiOkResponse({ type: UserProxy, isArray: true })
   @ApiQuery({ name: 'search', description: 'A busca a ser realizada', required: false })
@@ -52,6 +52,7 @@ export class UserController {
     return this.service.putUser(requestUser, userId, user).then(entity => new UserProxy(entity));
   }
 
+  @ProtectTo()
   @Delete(':userId')
   @ApiOperation({ summary: 'Deleta um usuário' })
   @ApiOkResponse()
