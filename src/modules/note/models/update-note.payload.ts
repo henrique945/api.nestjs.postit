@@ -18,6 +18,12 @@ export class UpdateNotePayload {
 
   @ApiPropertyOptional()
   @IsOptional()
+  @IsString({ message: 'A cor da nota deve ser uma string' })
+  @IsNotEmpty({ message: 'A cor da nota não pode ser vazia' })
+  public color?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
   @IsBoolean({ message: 'A visibilidade da nota deve ser um booleano' })
   public isPublic?: boolean;
 

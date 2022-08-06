@@ -18,6 +18,9 @@ export class NoteEntity {
   @Column({ default: false })
   public isPublic: boolean;
 
+  @Column({ nullable: true })
+  public color?: string;
+
   @CreateDateColumn()
   public createdAt: Date;
 
